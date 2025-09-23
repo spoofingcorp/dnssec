@@ -261,7 +261,7 @@ Pour ajouter un enregistrement à une zone déjà signée, vous devez modifier l
 
 La procédure se fait en quatre étapes :
 
-### 7.1. 📝 Modification du fichier de zone original
+#### 7.1. 📝 Modification du fichier de zone original
 
 Ouvrez votre fichier de zone source (celui sans l'extension `.signed`). Par exemple, `/etc/bind/zones/db.m2.dawan.lab`.
 
@@ -276,7 +276,7 @@ www     IN      A       192.168.20.50
 
 -----
 
-### 7.2. 📈 Incrémentation du numéro de série (Crucial \!)
+#### 7.2. 📈 Incrémentation du numéro de série (Crucial \!)
 
 Pour que les serveurs esclaves et les caches DNS sachent que la zone a été mise à jour, vous devez **impérativement incrémenter le numéro de série** dans l'enregistrement `SOA`.
 
@@ -293,7 +293,7 @@ Si vous utilisez le format `YYYYMMDDNN` (AnnéeMoisJourNuméro), passez simpleme
 
 -----
 
-### 7.3. 🔐 Re-signature de la zone
+#### 7.3. 🔐 Re-signature de la zone
 
 Utilisez la même commande `dnssec-signzone` que la première fois. Elle va lire votre fichier source mis à jour, utiliser les clés existantes (`.key` et `.private`) et générer un nouveau fichier `.signed`, écrasant l'ancien.
 
@@ -308,7 +308,7 @@ sudo dnssec-signzone -A -3 $(head -c 1000 /dev/urandom | sha1sum | cut -d' ' -f1
 
 -----
 
-### 7.4. 🔄 Rechargement de BIND
+#### 7.4. 🔄 Rechargement de BIND
 
 Enfin, demandez à BIND de recharger la zone mise à jour depuis le disque, sans redémarrer tout le service.
 
@@ -323,5 +323,6 @@ sudo rndc reload
 ```
 
 Votre nouvel enregistrement est maintenant actif et sécurisé par DNSSEC.
+
 
 
