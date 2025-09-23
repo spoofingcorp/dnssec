@@ -253,3 +253,74 @@ dig +dnssec www.google.com @192.168.20.181
     sudo journalctl -u named -f
 
     ```
+
+-----
+### **7. Ajout d'enregistrement DNS après la signature de la zone**
+
+Pour ajouter un enregistrement à une zone déjà signée, vous devez modifier le **fichier de zone original (non signé)**, puis le signer à nouveau. Il ne faut jamais modifier le fichier `.signed` manuellement.
+
+La procédure se fait en quatre étapes :
+
+### \#\# 1. 📝 Modification du fichier de zone original
+
+Ouvrez votre fichier de zone source (celui sans l'extension `.signed`). Par exemple, `/etc/bind/zones/db.m2.dawan.lab`.
+
+Ajoutez-y votre nouvel enregistrement `A` :
+
+```diff
+...
+ns2     IN      A       192.168.20.121
+www     IN      A       192.168.20.50
++ newpc   IN      A       192.168.20.99
+```
+
+-----
+
+### \#\# 2. 📈 Incrémentation du numéro de série (Crucial \!)
+
+Pour que les serveurs esclaves et les caches DNS sachent que la zone a été mise à jour, vous devez **impérativement incrémenter le numéro de série** dans l'enregistrement `SOA`.
+
+Si vous utilisez le format `YYYYMMDDNN` (AnnéeMoisJourNuméro), passez simplement au numéro suivant.
+
+```diff
+@       IN      SOA     ns1.m2.dawan.lab. admin.m2.dawan.lab. (
+-                              2025092201 ; Serial
++                              2025092301 ; Serial
+                               604800     ; Refresh
+                               86400      ; Retry
+...
+```
+
+-----
+
+### \#\# 3. 🔐 Re-signature de la zone
+
+Utilisez la même commande `dnssec-signzone` que la première fois. Elle va lire votre fichier source mis à jour, utiliser les clés existantes (`.key` et `.private`) et générer un nouveau fichier `.signed`, écrasant l'ancien.
+
+Placez-vous dans le répertoire de vos zones (`cd /etc/bind/zones`) et lancez :
+
+```bash
+sudo dnssec-signzone -A -3 $(head -c 1000 /dev/urandom | sha1sum | cut -d' ' -f1) \
+-N INCREMENT -o m2.dawan.lab -t db.m2.dawan.lab
+```
+
+  * Cette commande va créer une nouvelle version du fichier `db.m2.dawan.lab.signed` avec le nouvel enregistrement et les nouvelles signatures `RRSIG`.
+
+-----
+
+### \#\# 4. 🔄 Rechargement de BIND
+
+Enfin, demandez à BIND de recharger la zone mise à jour depuis le disque, sans redémarrer tout le service.
+
+```bash
+sudo rndc reload m2.dawan.lab
+```
+
+Ou si vous préférez recharger toutes les zones :
+
+```bash
+sudo rndc reload
+```
+
+Votre nouvel enregistrement est maintenant actif et sécurisé par DNSSEC.
+
