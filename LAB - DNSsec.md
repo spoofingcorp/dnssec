@@ -118,8 +118,8 @@ sudo dnssec-keygen -a ECDSAP256SHA256 -b 384 -n ZONE -f KSK m2.dawan.lab
 $TTL    604800
 
 ; --- Inclusion des clés publiques DNSSEC ---
-$INCLUDE /etc/bind/zones/Km2.dawan.lab.+013+xxxxx.key  ; ZSK
-$INCLUDE /etc/bind/zones/Km2.dawan.lab.+013+yyyyy.key  ; KSK
+$INCLUDE Km2.dawan.lab.+013+xxxxx.key 
+$INCLUDE Km2.dawan.lab.+013+yyyyy.key  
 ; -----------------------------------------
 
 @       IN      SOA     ns1.m2.dawan.lab. admin.m2.dawan.lab. (
@@ -251,4 +251,5 @@ dig +dnssec www.google.com @192.168.20.181
   * **Surveillance** : Gardez un œil sur les logs de Bind9.
     ```bash
     sudo journalctl -u named -f
+
     ```
