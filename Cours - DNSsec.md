@@ -135,7 +135,7 @@ Il y a deux indicateurs clés à observer.
 
 -----
 
-### **7. Le flag `ad` dans l'en-tête (HEADER)**
+### **Le flag `ad` dans l'en-tête (HEADER)**
 
 C'est la preuve la plus importante. Regardez la ligne `flags` dans la section `HEADER` :
 
@@ -151,7 +151,7 @@ Sa présence indique que **votre résolveur DNS** (ici, `192.168.20.180`) a effe
 
 -----
 
-### **7.2. L'enregistrement `RRSIG` dans la réponse (ANSWER)**
+### **L'enregistrement `RRSIG` dans la réponse (ANSWER)**
 
 Dans la section `ANSWER`, en plus des enregistrements `A` (les adresses IP), vous voyez un enregistrement **`RRSIG`**.
 
@@ -167,7 +167,7 @@ Sa présence montre que la zone `cloudflare.com` est **signée par son propriét
 
 -----
 
-### 7.3 Conclusion
+### Conclusion
 
 Pour confirmer qu'une réponse est bien sécurisée par DNSSEC, vous devez chercher ces deux éléments :
 
